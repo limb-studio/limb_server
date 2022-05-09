@@ -1,5 +1,4 @@
-import { Entity, PrimaryKey, Property, UuidType } from '@mikro-orm/core';
-import { first } from 'rxjs';
+import { Entity, PrimaryKey, Property, Unique } from '@mikro-orm/core';
 
 @Entity()
 export class Users {
@@ -22,11 +21,12 @@ export class Users {
   @Property({ columnType: 'text', nullable: true })
   lastname?: string;
 
-  @Property({ columnType: 'uuid', nullable: true })
-  uid?: string;
+  @Unique({ name: 'unique_user_uid' })
+  @Property({ columnType: 'uuid' })
+  uid!: string;
 
-  @Property({ nullable: true })
-  isActive?: boolean;
+  @Property()
+  isActive!: boolean;
 
   constructor(login: string, password: string, firstname: string, secondname: string, lastname: string, isActive: boolean, uid: string) {
     this.login = login;
@@ -37,4 +37,5 @@ export class Users {
     this.isActive = isActive;
     this.uid = uid;
   }
+
 }

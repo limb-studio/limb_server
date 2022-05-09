@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Groups } from 'src/group/Groups';
 import { UserService } from './user.service';
 import { Users } from './Users';
 
@@ -30,5 +31,10 @@ export class UserController {
     @Delete('force/:id')
     async delete(@Param() params) {
         await this.userService.delete(params.id)
+    }
+
+    @Get(':id/groups')
+    async getGroups(@Param() params): Promise<Groups[]> {
+        return await this.userService.getGroups(params.id);
     }
 }

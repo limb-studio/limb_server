@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { Users } from 'src/user/Users';
 import { GroupService } from './group.service';
 import { Groups } from './Groups';
@@ -27,12 +27,12 @@ export class GroupController {
         return await this.groupService.create(user);
     }
 
-    @Put(':id/appendUser/:uid')
-    async appendUser(@Param() params) {
-        await this.groupService.appendUser(params.id, params.uid)
+    @Put(':id/appendUser')
+    async appendUser(@Param() params, @Query() query) {
+        await this.groupService.appendUser(params.id, query.userid)
     }
 
-    @Get(':id/getUsers')
+    @Get(':id/users')
     async getUsers(@Param() params): Promise<Users[]> {
         return await this.groupService.getUsers(params.id);
     }

@@ -58,13 +58,14 @@ export class GroupService {
         }
     }
 
-    async appendUser(id: number, uid: string): Promise<void> {
+    async appendUser(id: number, userid: number): Promise<void> {
         try {
-            const group = await this.getById(id);
-            const exists = await this.em.findOne(GroupUsers, { $and: [{ groupUid: group.uid }, { userUid: uid }] });
-            if (exists != null) {
-                const relation = new GroupUsers(group.uid, uid, 0);
-                await this.em.persistAndFlush(relation);
+            const group = await this.em.findOne(Groups, {id:id});
+            const user = await this.em.findOne(Users, {id:userid});
+            const exists = await this.em.findOne(GroupUsers, { $and: [{group : group}, {user: user}]});
+            if (exists == null) {
+                const gu = this.em.create(GroupUsers, {group: group, user: user, relation: 0})
+                await this.em.persistAndFlush(gu);
             } else throw Error("Already exists");
         } catch (e) {
             return e;
@@ -73,14 +74,16 @@ export class GroupService {
 
     async getUsers(id: number): Promise<Users[]> {
         try {
-            const group = await this.getById(id);
-            const relations = await this.em.find(GroupUsers, { groupUid: group.uid });
-            var users: Users[];
-            relations.forEach(async u => {
-                console.log(u.id);
-                var user = await this.em.findOne(Users, { uid: u.userUid });
-                users.push();
+            const group = await this.em.findOne(Groups, {id:id});
+            const relations = await this.em.find(GroupUsers, { group: group });
+            console.log('length', relations.length)
+            let users: Users[] = new Array(relations.length);
+            await this.em.populate(relations, ['user']);
+            relations.map((value, index) => {
+                value.user.password = null;
+                users[index] = value.user;
             })
+            console.log('users', users.length)
             return users;
         } catch (e) {
             return e;

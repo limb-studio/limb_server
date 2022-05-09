@@ -1,23 +1,22 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, ManyToOne, Property } from '@mikro-orm/core';
+import { Groups } from './Groups';
+import { Users } from '../user/Users';
 
 @Entity()
 export class GroupUsers {
 
-  @PrimaryKey()
-  id!: number;
+  @ManyToOne({ entity: () => Groups, primary: true })
+  group!: Groups;
 
-  @Property({ columnType: 'uuid', nullable: true })
-  groupUid?: string;
-
-  @Property({ columnType: 'uuid', nullable: true })
-  userUid?: string;
+  @ManyToOne({ entity: () => Users, primary: true })
+  user!: Users;
 
   @Property({ nullable: true })
   relation?: number;
 
-  constructor(groupUid: string, userUid: string, relation: number) {
-    this.groupUid = groupUid;
-    this.userUid = userUid;
-    this.relation = relation;
+  constructor(data: Partial<GroupUsers>) {
+    this.group = data.group;
+    this.user = data.user;
+    this.relation = data.relation || 0;
   }
 }

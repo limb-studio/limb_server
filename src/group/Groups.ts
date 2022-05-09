@@ -1,4 +1,4 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, PrimaryKey, Property, Unique } from '@mikro-orm/core';
 
 @Entity()
 export class Groups {
@@ -6,20 +6,21 @@ export class Groups {
   @PrimaryKey()
   id!: number;
 
-  @Property({ columnType: 'text', nullable: true })
-  name?: string;
+  @Property({ columnType: 'text' })
+  name!: string;
 
-  @Property({ columnType: 'uuid', nullable: true })
-  ownerUid?: string;
+  @Property({ columnType: 'uuid' })
+  ownerUid!: string;
 
-  @Property({ nullable: true })
-  type?: number;
+  @Property()
+  type!: number;
 
-  @Property({ columnType: 'uuid', nullable: true })
-  uid?: string;
+  @Unique({ name: 'unique_group_uid' })
+  @Property({ columnType: 'uuid' })
+  uid!: string;
 
-  @Property({ nullable: true })
-  isActive?: boolean;
+  @Property()
+  isActive!: boolean;
 
   constructor(name: string, ownerUid: string, type: number, isActive: boolean, uid: string) {
     this.name = name;
