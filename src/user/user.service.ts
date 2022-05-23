@@ -12,6 +12,7 @@ export class UserService {
     private readonly orm: MikroORM,
     private readonly em: EntityManager,
   ) { }
+
   async getAll(): Promise<Users[]> {
     try {
       const users = await this.em.find(Users, {});
@@ -25,16 +26,6 @@ export class UserService {
   async getById(id: number): Promise<Users> {
     try {
       const user = await this.em.findOneOrFail(Users, { id: id });
-      user.password = null;
-      return user;
-    } catch (e) {
-      return e;
-    }
-  }
-
-  async getByUid(uid: string): Promise<Users> {
-    try {
-      const user = await this.em.findOne(Users, { uid: uid });
       user.password = null;
       return user;
     } catch (e) {
@@ -72,9 +63,8 @@ export class UserService {
     }
   }
 
-  async getGroups(id: number): Promise<Groups[]> {
+  async getGroups(user: Users): Promise<Groups[]> {
     try {
-      const user = await this.em.findOne(Users, { id: id });
       const relations = await this.em.find(GroupUsers, { user: user });
       let groups: Groups[] = new Array(relations.length);
       await this.em.populate(relations, ['group']);

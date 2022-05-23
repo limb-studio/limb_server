@@ -29,15 +29,6 @@ export class GroupService {
         }
     }
 
-    async getByUid(uid: string): Promise<Groups> {
-        try {
-            const user = await this.em.findOne(Groups, { uid: uid });
-            return user;
-        } catch (e) {
-            return e;
-        }
-    }
-
     async create(u: Groups) {
         try {
             const exists = this.em.findOne(Groups, { $or: [{ uid: u.uid }, { name: u.name }] });
@@ -72,18 +63,15 @@ export class GroupService {
         }
     }
 
-    async getUsers(id: number): Promise<Users[]> {
+    async getUsers(group: Groups): Promise<Users[]> {
         try {
-            const group = await this.em.findOne(Groups, {id:id});
             const relations = await this.em.find(GroupUsers, { group: group });
-            console.log('length', relations.length)
             let users: Users[] = new Array(relations.length);
             await this.em.populate(relations, ['user']);
             relations.map((value, index) => {
                 value.user.password = null;
                 users[index] = value.user;
             })
-            console.log('users', users.length)
             return users;
         } catch (e) {
             return e;
