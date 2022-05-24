@@ -1,5 +1,5 @@
 import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
-import { Users } from '../user/Users';
+import { User } from 'src/user/entities/user.entity';
 
 @Entity()
 export class FileVersions {
@@ -19,8 +19,8 @@ export class FileVersions {
   @Property({ columnType: 'text' })
   hash!: string;
 
-  @ManyToOne({ entity: () => Users })
-  author!: Users;
+  @ManyToOne({ entity: () => User })
+  author!: User;
 
   @Property({ length: 6 })
   creationDate!: Date;

@@ -1,10 +1,10 @@
 import { Options } from '@mikro-orm/core';
-import { Groups } from './group/Groups';
-import { GroupUsers } from './group/GroupUsers';
-import { Users } from './user/Users';
+import { Group } from './group/entities/group.entity';
+import { GroupUser } from './group/entities/groupuser.entity';
+import { User } from './user/entities/user.entity';
 
 const mikroOrmConfig: Options = {
-    entities: [Users, Groups, GroupUsers],
+    entities: [User, Group, GroupUser],
       dbName: 'limb',
       type: 'postgresql',
       user: 'aleksandr',

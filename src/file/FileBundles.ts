@@ -1,6 +1,6 @@
 import { Collection, Entity, ManyToMany, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
+import { User } from 'src/user/entities/user.entity';
 import { FileVersions } from './FileVersions';
-import { Users } from '../user/Users';
 
 @Entity()
 export class FileBundles {
@@ -14,8 +14,8 @@ export class FileBundles {
   @Property({ length: 6 })
   dateCreated!: Date;
 
-  @ManyToOne({ entity: () => Users })
-  author!: Users;
+  @ManyToOne({ entity: () => User })
+  author!: User;
 
   @ManyToOne({ entity: () => FileBundles, nullable: true })
   parent?: FileBundles;

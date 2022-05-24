@@ -3,6 +3,6 @@ import { GroupService } from './group.service';
 import { GroupResolver } from './group.resolver';
 
 @Module({
-  providers: [GroupService, GroupResolver]
+  providers: [GroupResolver, GroupService]
 })
 export class GroupModule {}

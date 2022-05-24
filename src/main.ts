@@ -5,6 +5,7 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import multipart from "fastify-multipart";
+import { ValidationPipe } from '@nestjs/common/pipes';
 declare const module: any;
 
 async function bootstrap() {
@@ -13,6 +14,7 @@ async function bootstrap() {
     credentials: true,
   }}*/);
   app.register(multipart);
+  app.useGlobalPipes(new ValidationPipe());
   await app.listen(3001);
   
   if (module.hot) {

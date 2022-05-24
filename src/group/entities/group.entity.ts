@@ -1,38 +1,38 @@
 import { Entity, PrimaryKey, Property, Unique } from '@mikro-orm/core';
-import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { Users } from 'src/user/Users';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { User } from 'src/user/entities/user.entity';
 
 @Entity()
 @ObjectType()
-export class Groups {
+export class Group {
 
-  @Field(type => ID, {nullable: false})
+  @Field(() => Int, {description: 'ID of group'})
   @PrimaryKey()
   id!: number;
 
-  @Field({ nullable: true })
+  @Field()
   @Property({ columnType: 'text' })
   name!: string;
 
-  @Field({ nullable: true })
+  @Field()
   @Property({ columnType: 'uuid' })
-  ownerUid!: string;
+  ownerUid: string;
 
-  @Field({ nullable: true })
+  @Field()
   @Property()
   type!: number;
 
-  @Field({ nullable: true })
+  @Field()
   @Unique({ name: 'unique_group_uid' })
   @Property({ columnType: 'uuid' })
   uid!: string;
 
-  @Field({ nullable: true })
+  @Field()
   @Property()
   isActive!: boolean;
 
-  @Field(type => [Users], {nullable: true})
-  users: Users[];
+  @Field(() => [User])
+  users: User[];
 
   constructor(name: string, ownerUid: string, type: number, isActive: boolean, uid: string) {
     this.name = name;

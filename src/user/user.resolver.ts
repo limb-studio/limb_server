@@ -1,50 +1,41 @@
-import { Args, ID, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import { Users } from './Users';
+import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
 import { UserService } from './user.service';
-import { randomUUID } from 'crypto';
-@Resolver(of => Users)
+import { User } from './entities/user.entity';
+import { CreateUserInput } from './dto/create-user.input';
+import { UpdateUserInput } from './dto/update-user.input';
+import { GroupService } from 'src/group/group.service';
+
+@Resolver(() => User)
 export class UserResolver {
+  constructor(private readonly userService: UserService, private readonly groupService: GroupService) {}
 
-  constructor(private readonly userService: UserService) { }
-
-  @Query(returns => Users)
-  async user(@Args('id', { type: () => ID }) id: number) {
-    return await this.userService.getById(id);
+  @Mutation(() => User)
+  createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
+    return this.userService.create(createUserInput);
   }
 
-  @Query((type) => [Users], { name: `users` })
-  async findAll(@Args('limit', { nullable: true, type: () => Int }) limit: number): Promise<Users[]> {
-    const users = await this.userService.getAll()
-    if (limit == null || limit > users.length) return users;
-    users.length = limit;
-    return users;
-  }  
-  
+  @Query(() => [User], { name: 'users' })
+  findAll() {
+    return this.userService.findAll();
+  }
+
+  @Query(() => User, { name: 'user' })
+  findOne(@Args('id', { type: () => Int }) id: number) {
+    return this.userService.findOne(id);
+  }
+
+  @Mutation(() => User)
+  updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
+    return this.userService.update(updateUserInput.id, updateUserInput);
+  }
+
   @ResolveField()
-  async groups(@Parent() user: Users) {
-    return this.userService.getGroups(user);
+  async groups(@Parent() user: User) {
+    return this.groupService.findGroupsByUser(user);
   }
-
-  @Mutation(returns => Users)
-  async addUser(
-    @Args('login', { type: () => String }) login: string,
-    @Args('password', { type: () => String }) password: string = '',
-    @Args('firstname', { type: () => String }) firstname: string = '',
-    @Args('secondname', { type: () => String }) secondname: string = '',
-    @Args('lastname', { type: () => String }) lastname: string = '',
-    @Args('uid', { type: () => String }) uid: string = randomUUID(),
-    @Args('isActive', { type: () => Boolean }) isActive: boolean = false,
-  ): Promise<Users> {
-    await this.userService.create(new Users(login, password, firstname, secondname, lastname, isActive, uid));
-    const result = await (await this.userService.getAll()).find(x => x.login == login);
-    return result;
-  }
-
-  @Mutation(returns => Boolean)
-  async deleteUser(
-    @Args('id', { type: () => ID }) id: number
-  ) {
-    await this.userService.delete(id);
-    return true;
+  
+  @Mutation(() => User)
+  removeUser(@Args('id', { type: () => Int }) id: number) {
+    return this.userService.remove(id);
   }
 }
