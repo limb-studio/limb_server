@@ -24,6 +24,11 @@ export class UserResolver {
     return this.userService.findOne(id);
   }
 
+  @Query(() => [User], { name: 'usersByFullName' })
+  findByFullName(@Args('fullname', { type: () => String }) fullname: String) {
+    return this.userService.findByFullName(fullname);
+  }
+
   @Mutation(() => User)
   updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
     return this.userService.update(updateUserInput.id, updateUserInput);

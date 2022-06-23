@@ -43,6 +43,10 @@ export class User {
   @Property()
   isActive!: boolean;
 
+  @Field()
+  @Property()
+  fullname!: string;
+
   @Field(() => [Group])
   groups!: Group[];
   

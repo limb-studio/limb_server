@@ -1,4 +1,4 @@
-import { EntityManager, MikroORM } from '@mikro-orm/core';
+import { EntityManager, expr, MikroORM } from '@mikro-orm/core';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
@@ -31,6 +31,13 @@ export class UserService {
     const user = await this.em.findOneOrFail(User, { id: id });
       user.password = null;
       return user;
+  }
+
+  async findByFullName(fullname: String) {
+    const users = await this.em.find(User, { [expr('lower(fullname)')]: { $like: '%'+fullname+'%'} });
+    users.forEach((x) => (x.password = null));
+    users.sort((a, b) => a.id - b.id)
+    return users;
   }
 
   async update(id: number, updateUserInput: UpdateUserInput) {
